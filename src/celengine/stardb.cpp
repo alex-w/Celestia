@@ -1002,6 +1002,7 @@ bool StarDatabase::createStar(Star* star,
 
     // Compute the position in rectangular coordinates.  If a star has an
     // orbit and barycenter, it's position is the position of the barycenter.
+    double distance = 0.0;
     if (hasBarycenter)
     {
         star->setPosition(barycenterPosition);
@@ -1010,7 +1011,7 @@ bool StarDatabase::createStar(Star* star,
     {
         double ra = 0.0;
         double dec = 0.0;
-        double distance = 0.0;
+        //double distance = 0.0;
 
         if (disposition == DataDisposition::Modify)
         {
@@ -1128,7 +1129,17 @@ bool StarDatabase::createStar(Star* star,
         float extinction = 0.0f;
         if (starData->getNumber("Extinction", extinction))
         {
-            star->setExtinction(extinction);
+            if (distance == 0.0)
+            {
+                Vector3f pos = star->getPosition();
+
+                // Convert from Celestia's coordinate system
+                Vector3f v(pos.x(), -pos.z(), pos.y());
+                v = Quaternionf(AngleAxisf((float) astro::J2000Obliquity, Vector3f::UnitX())) * v;
+
+                distance = v.norm();
+            }
+            star->setExtinction(extinction / distance);
             if (!absoluteDefined)
                 star->setAbsoluteMagnitude(star->getAbsoluteMagnitude() - extinction);
         }
