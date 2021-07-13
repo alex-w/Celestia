@@ -12,7 +12,7 @@
 
 #include <fstream>
 #include <string>
-#include <celcompat/memory.h>
+#include <memory>
 #include <celutil/filetype.h>
 #include <celutil/timer.h>
 #include <celutil/watcher.h>
@@ -386,6 +386,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setScriptHook(std::unique_ptr<celestia::scripts::IScriptHook> &&hook) { m_scriptHook = std::move(hook); }
     const std::shared_ptr<celestia::scripts::ScriptMaps>& scriptMaps() const { return m_scriptMaps; }
 
+    Image captureImage() const;
     bool saveScreenShot(const fs::path&, ContentType = Content_Unknown) const;
 
  protected:
