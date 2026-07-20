@@ -338,7 +338,12 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 
         if (shadprop.hasScattering())
         {
-            prog->setAtmosphereParameters(*atmosphere, radius, radius);
+            float extinctionThreshold = renderer->getAtmosphereExtinctionThreshold();
+            float atmosphereRadius = radius +
+                                     renderer->getAtmosphereShellHeight(atmosphere->mieScaleHeight);
+            prog->setAtmosphereParameters(*atmosphere, radius, radius, atmosphereRadius,
+                                          renderer->getAtmosphereSegmentCount(),
+                                          extinctionThreshold);
         }
     }
 
@@ -604,7 +609,12 @@ void renderClouds_GLSL(const RenderInfo& ri,
 
         if (shadprop.hasScattering())
         {
-            prog->setAtmosphereParameters(*atmosphere, radius, cloudRadius);
+            float extinctionThreshold = renderer->getAtmosphereExtinctionThreshold();
+            float atmosphereRadius = radius +
+                                     renderer->getAtmosphereShellHeight(atmosphere->mieScaleHeight);
+            prog->setAtmosphereParameters(*atmosphere, radius, cloudRadius, atmosphereRadius,
+                                          renderer->getAtmosphereSegmentCount(),
+                                          extinctionThreshold);
         }
     }
 
